@@ -10,10 +10,11 @@
 #include <crtdbg.h>
 #endif
  
-#include <d3dx11.h>
+#include <d3d11.h>
 #include "d3dx11Effect.h"
-#include <xnamath.h>
-#include <dxerr.h>
+#include <DirectXMath.h>
+#include <DirectxPackedVector.h>
+#include "dxerr.h"
 #include <cassert>
 #include <ctime>
 #include <algorithm>
@@ -23,6 +24,8 @@
 #include <vector>
 #include "MathHelper.h"
 #include "LightHelper.h"
+
+using namespace DirectX;
 
 //---------------------------------------------------------------------------------------
 // Simple d3d error checker for book demos.
@@ -35,7 +38,7 @@
 		HRESULT hr = (x);                                      \
 		if(FAILED(hr))                                         \
 		{                                                      \
-			DXTrace(__FILE__, (DWORD)__LINE__, hr, L#x, true); \
+			DXTrace(__FILEW__, (DWORD)__LINE__, hr, L#x, true); \
 		}                                                      \
 	}
 	#endif
@@ -46,6 +49,21 @@
 	#endif
 #endif 
 
+#ifndef D3DX11INLINE
+#ifdef _MSC_VER
+#if (_MSC_VER >= 1200)
+#define D3DX11INLINE __forceinline
+#else
+#define D3DX11INLINE __inline
+#endif
+#else
+#ifdef __cplusplus
+#define D3DX11INLINE inline
+#else
+#define D3DX11INLINE
+#endif
+#endif
+#endif
 
 //---------------------------------------------------------------------------------------
 // Convenience macro for releasing COM objects.
@@ -63,22 +81,6 @@
 // Utility classes.
 //---------------------------------------------------------------------------------------
 
-class d3dHelper
-{
-public:
-	///<summary>
-	/// 
-	/// Does not work with compressed formats.
-	///</summary>
-	static ID3D11ShaderResourceView* CreateTexture2DArraySRV(
-		ID3D11Device* device, ID3D11DeviceContext* context,
-		std::vector<std::wstring>& filenames,
-		DXGI_FORMAT format = DXGI_FORMAT_FROM_FILE,
-		UINT filter = D3DX11_FILTER_NONE, 
-		UINT mipFilter = D3DX11_FILTER_LINEAR);
-
-	static ID3D11ShaderResourceView* CreateRandomTexture1DSRV(ID3D11Device* device);
-};
 
 class TextHelper
 {
@@ -139,9 +141,9 @@ public:
 	///<summary>
 	/// Converts XMVECTOR to XMCOLOR, where XMVECTOR represents a color.
 	///</summary>
-	static D3DX11INLINE XMCOLOR ToXmColor(FXMVECTOR v)
+	static D3DX11INLINE PackedVector::XMCOLOR ToXmColor(FXMVECTOR v)
 	{
-		XMCOLOR dest;
+        PackedVector::XMCOLOR dest;
 		XMStoreColor(&dest, v);
 		return dest;
 	}

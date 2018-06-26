@@ -16,6 +16,12 @@
     <Filter Include="Common">
       <UniqueIdentifier>{6a885e4d-e075-461e-bfae-f0cc088d207b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\dxtexloader">
+      <UniqueIdentifier>{795654e3-b693-4a9d-a80b-7d20bb17c426}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\dxerr">
+      <UniqueIdentifier>{34631fb7-5c5d-4c5e-a0ec-d9b973361871}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Init Direct3D.cpp">
@@ -30,6 +36,12 @@
     <ClCompile Include="..\..\Common\GameTimer.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Common\DDSTextureLoader\DDSTextureLoader.cpp">
+      <Filter>Common\dxtexloader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\dxerr.cpp">
+      <Filter>Common\dxerr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Common\d3dApp.h">
@@ -40,6 +52,12 @@
     </ClInclude>
     <ClInclude Include="..\..\Common\GameTimer.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\DDSTextureLoader\DDSTextureLoader.h">
+      <Filter>Common\dxtexloader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\dxerr.h">
+      <Filter>Common\dxerr</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

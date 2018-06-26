@@ -71,5 +71,6 @@ void InitDirect3DApp::DrawScene()
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::Blue));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
 
+    //将后台缓冲区的内容呈现在屏幕上
 	HR(mSwapChain->Present(0, 0));
 }

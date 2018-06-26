@@ -141,8 +141,12 @@ void D3DApp::OnResize()
 	ReleaseCOM(mDepthStencilBuffer);
 
 
-	// Resize the swap chain and recreate the render target view.
+    //窗口大小改变之后，尤其需要重新创建后台缓冲区和深度/模板缓冲区，使它们与窗口客户区的大小一致。
+    //后台缓冲区的大小可以通过调用IDXGISwapChain::ResizeBuffers方法来进行调整
+    //而深度/模板缓冲区必须被销毁，然后根据新的大小重新创建。
+    //另外，渲染目标视图和深度/模板视图也必须重新创建。
 
+	// Resize the swap chain and recreate the render target view.
 	HR(mSwapChain->ResizeBuffers(1, mClientWidth, mClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 0));
 	ID3D11Texture2D* backBuffer;
 	HR(mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer)));
@@ -369,46 +373,32 @@ bool D3DApp::InitMainWindow()
 
 bool D3DApp::InitDirect3D()
 {
-	// Create the device and device context.
+
+    //创建设备(表示显卡的设备)和设备上下文
 
 	UINT createDeviceFlags = 0;
 #if defined(DEBUG) || defined(_DEBUG)  
-    createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+    createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;  //激活调试层。当指定调试标志值后，Direct3D会向VC++的输出窗口发送调试信息
 #endif
 
 	D3D_FEATURE_LEVEL featureLevel;
-	HRESULT hr = D3D11CreateDevice(
-			0,                 // default adapter
-			md3dDriverType,
-			0,                 // no software device
-			createDeviceFlags, 
-			0, 0,              // default feature level array
-			D3D11_SDK_VERSION,
-			&md3dDevice,
-			&featureLevel,
-			&md3dImmediateContext);
+	//HRESULT hr = D3D11CreateDevice(
+	//		0,                 // default adapter : 只使用主显卡
+	//		md3dDriverType,
+	//		0,                 // no software rasterizer
+	//		createDeviceFlags, 
+	//		0, 0,              // default feature level array
+	//		D3D11_SDK_VERSION,
+	//		&md3dDevice,
+	//		&featureLevel,
+	//		&md3dImmediateContext);
 
-	if( FAILED(hr) )
-	{
-		MessageBox(0, L"D3D11CreateDevice Failed.", 0, 0);
-		return false;
-	}
-
-	if( featureLevel != D3D_FEATURE_LEVEL_11_0 )
-	{
-		MessageBox(0, L"Direct3D Feature Level 11 unsupported.", 0, 0);
-		return false;
-	}
+    //所有支持Direct3D 11的设备都支持所有渲染目标格式的4X MSAA, 只是支持的质量等级可能不同
+    //quality跟我们的期待采样数和纹理格式有关
 
 	// Check 4X MSAA quality support for our back buffer format.
 	// All Direct3D 11 capable devices support 4X MSAA for all render 
 	// target formats, so we only need to check quality support.
-
-	HR(md3dDevice->CheckMultisampleQualityLevels(
-		DXGI_FORMAT_R8G8B8A8_UNORM, 4, &m4xMsaaQuality));
-	assert( m4xMsaaQuality > 0 );
-
-	// Fill out a DXGI_SWAP_CHAIN_DESC to describe our swap chain.
 
 	DXGI_SWAP_CHAIN_DESC sd;
 	sd.BufferDesc.Width  = mClientWidth;
@@ -444,20 +434,37 @@ bool D3DApp::InitDirect3D()
 	// (by calling CreateDXGIFactory), we get an error: "IDXGIFactory::CreateSwapChain: 
 	// This function is being called with a device from a different IDXGIFactory."
 
-	IDXGIDevice* dxgiDevice = 0;
-	HR(md3dDevice->QueryInterface(__uuidof(IDXGIDevice), (void**)&dxgiDevice));
-	      
-	IDXGIAdapter* dxgiAdapter = 0;
-	HR(dxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&dxgiAdapter));
+	//IDXGIDevice* dxgiDevice = 0;
+	//HR(md3dDevice->QueryInterface(__uuidof(IDXGIDevice), (void**)&dxgiDevice));
+	//      
+	//IDXGIAdapter* dxgiAdapter = 0;
+	//HR(dxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&dxgiAdapter));
 
-	IDXGIFactory* dxgiFactory = 0;
-	HR(dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&dxgiFactory));
+	//IDXGIFactory* dxgiFactory = 0;
+	//HR(dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&dxgiFactory));
 
-	HR(dxgiFactory->CreateSwapChain(md3dDevice, &sd, &mSwapChain));
-	
-	ReleaseCOM(dxgiDevice);
-	ReleaseCOM(dxgiAdapter);
-	ReleaseCOM(dxgiFactory);
+	//HR(dxgiFactory->CreateSwapChain(md3dDevice, &sd, &mSwapChain));
+	//
+	//ReleaseCOM(dxgiDevice);
+	//ReleaseCOM(dxgiAdapter);
+	//ReleaseCOM(dxgiFactory);
+
+    HRESULT hr = D3D11CreateDeviceAndSwapChain(0,D3D_DRIVER_TYPE_HARDWARE, 0, createDeviceFlags, 0 , 0, D3D11_SDK_VERSION, &sd, &mSwapChain, &md3dDevice, &featureLevel, &md3dImmediateContext);
+    if( FAILED(hr) )
+    {
+    	MessageBox(0, L"D3D11CreateDevice Failed.", 0, 0);
+    	return false;
+    }
+
+    if (featureLevel != D3D_FEATURE_LEVEL_11_0)
+    {
+        MessageBox(0, L"Direct3D Feature Level 11 unsupported.", 0, 0);
+        return false;
+    }
+
+    HR(md3dDevice->CheckMultisampleQualityLevels(
+        DXGI_FORMAT_R8G8B8A8_UNORM, 4, &m4xMsaaQuality));
+    assert(m4xMsaaQuality > 0);
 
 	// The remaining steps that need to be carried out for d3d creation
 	// also need to be executed every time the window is resized.  So
