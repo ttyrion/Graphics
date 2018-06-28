@@ -10,7 +10,7 @@ https://blog.csdn.net/pobber/article/details/51971939?_t=t
 https://learnopengl-cn.github.io/
 
 
-# 解惑：别人的Direct3D 11 demo 可能在自己机子上build失败？
+### 解惑：别人的Direct3D 11 demo 可能在自己机子上build失败？
 
 
 从Win8开始，DirectX SDK 被包含在了 Windows SDK中。  
