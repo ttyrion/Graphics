@@ -31,5 +31,9 @@ https://docs.microsoft.com/zh-cn/windows/desktop/directx-sdk--august-2009-
 对于D3DXMath，更详细的还可以参考Working with D3DXMath ( https://docs.microsoft.com/zh-cn/windows/desktop/dxmath/pg-xnamath-migration-d3dx )  
 这里专门讲述了怎么替换老的D3DXMath，包括API，数据结构等等。  
 
-
-
+### Code Tech
+1、Direct3D编程过程中，经常需要通过日志分析问题，这里是一个简单好用的输出日志到DebugView的代码示例：
+#define Direct3DDebugString(msg) { std::wstringstream ss; ss << L"[Direct3D] "<< msg; ::OutputDebugString(ss.str().c_str()); }
+之后代码里面就可以这样输出日志：
+Direct3DDebugString(L"ResizeBuffers width=" << width_ << L" height=" << height_);
+开启DebugView工具即可查看日志输出过程。
