@@ -30,12 +30,24 @@
     <ClInclude Include="DXViewer.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="GraphicEngine.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DXViewerApp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DXViewer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicEngine.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DXViewerApp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
