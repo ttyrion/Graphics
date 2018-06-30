@@ -2,41 +2,15 @@
 #include "resource.h"
 #include "DXViewerApp.h"
 
-DXViewerApp::DXViewerApp(HINSTANCE instance) {
-    instance_ = instance;
-}
+DXViewerApp* theApp = NULL;
 
-DXViewerApp::~DXViewerApp() {
-
-}
-
-bool DXViewerApp::Init() {
-    window_ = CreateViewerWindow(instance_, width_, height_);
-    if (window_) {
-        ShowWindow(window_, SW_SHOW);
-        UpdateWindow(window_);
-    }
-    else {
-        return false;
-    }
-
-    engine_.InitDirect3D(window_, width_, height_);
-
-    return true;
-}
-
-void DXViewerApp::Run() {
-    MSG msg;
-    // 主消息循环: 
-    while (GetMessage(&msg, NULL, 0, 0)) {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-}
-
-LRESULT CALLBACK DXViewerApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message)
     {
+    case WM_ACTIVATE: {        
+        theApp->OnActivate(message, wParam, lParam);
+    }
+    break;
     case WM_COMMAND:
     {
         int wmId = LOWORD(wParam);
@@ -62,6 +36,12 @@ LRESULT CALLBACK DXViewerApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LP
         EndPaint(hWnd, &ps);
     }
     break;
+    case WM_SIZE: {
+        theApp->width() = LOWORD(lParam);
+        theApp->height() = HIWORD(lParam);
+        theApp->OnSize(message, wParam, lParam);
+    }
+    break;
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
@@ -71,13 +51,83 @@ LRESULT CALLBACK DXViewerApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LP
     return 0;
 }
 
+DXViewerApp::DXViewerApp(HINSTANCE instance) {
+    instance_ = instance;
+}
+
+DXViewerApp::~DXViewerApp() {
+
+}
+
+bool DXViewerApp::Init() {
+    window_ = CreateViewerWindow(instance_, width_, height_);
+    if (!window_) {
+        return false;
+    }
+    if (!engine_.InitDirect3D(window_, width_, height_)) {
+        return false;
+    }
+
+    ::ShowWindow(window_, SW_SHOW);
+    ::UpdateWindow(window_);
+
+    return true;
+}
+
+void DXViewerApp::Run() {
+    MSG msg;
+    // 主消息循环: 
+    while (true) {
+        if (::PeekMessage(&msg, 0, 0, 0, PM_REMOVE)) {
+            if (msg.message == WM_QUIT) {
+                break;
+            }
+
+            ::TranslateMessage(&msg);
+            ::DispatchMessage(&msg);
+        }
+        else {
+            //消息队列没有消息
+            UpdateScene();
+            DrawScene();
+
+            Sleep(100);
+        }        
+    }
+}
+
+LRESULT DXViewerApp::OnActivate(UINT msg, WPARAM wParam, LPARAM lParam) {
+    if (LOWORD(wParam) == WA_INACTIVE) {
+        paused_ = true;
+    }
+    else {
+        paused_ = false;
+    }
+
+    return 0;
+}
+
+LRESULT DXViewerApp::OnSize(UINT msg, WPARAM wParam, LPARAM lParam) {
+    engine_.ReSizeRender(width_, height_);
+
+    return 0;
+}
+
+void DXViewerApp::UpdateScene() {
+    engine_.UpdateScene();
+}
+
+void DXViewerApp::DrawScene() {
+    engine_.DrawScene();
+}
+
 HWND DXViewerApp::CreateViewerWindow(HINSTANCE instance, const unsigned int width, const unsigned int height) {
     WNDCLASSEXW wcex;
     const LPCWSTR window_class = L"DXViewerClass";
     const LPCWSTR window_title = L"DXViewer";
     wcex.cbSize = sizeof(WNDCLASSEX);
     wcex.style = CS_HREDRAW | CS_VREDRAW;
-    wcex.lpfnWndProc = (WNDPROC)DXViewerApp::WndProc;
+    wcex.lpfnWndProc = WndProc;
     wcex.cbClsExtra = 0;
     wcex.cbWndExtra = 0;
     wcex.hInstance = instance;

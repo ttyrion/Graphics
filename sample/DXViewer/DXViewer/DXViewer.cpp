@@ -13,9 +13,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-    DXViewerApp theApp(hInstance);
-    if (theApp.Init()) {
-        theApp.Run();
+    theApp = new DXViewerApp(hInstance);
+    if (theApp->Init()) {
+        theApp->Run();
     }
 
     return 0;
