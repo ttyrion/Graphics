@@ -71,8 +71,6 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="shaders.hlsl">
-      <Filter>头文件</Filter>
-    </FxCompile>
+    <None Include="shaders.hlsl" />
   </ItemGroup>
 </Project>

@@ -3,7 +3,6 @@
 #include "utility.h"
 #include <assert.h>
 #include <d3dcompiler.h>
-#include <DirectXMath.h>
 #include <fstream>
 #include <vector>
 
@@ -60,38 +59,154 @@ bool GraphicEngine::InitDirect3D(HWND render_window, const unsigned int width, c
     }
     assert(x4_msaa_uality_ > 0);
 
+
+    ZeroMemory(&depth_stenci_desc_, sizeof(depth_stenci_desc_));
+    // Set up the description of the stencil state.
+    depth_stenci_desc_.DepthEnable = true;
+    depth_stenci_desc_.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+    depth_stenci_desc_.DepthFunc = D3D11_COMPARISON_LESS;
+    depth_stenci_desc_.StencilEnable = true;
+    depth_stenci_desc_.StencilReadMask = 0xFF;
+    depth_stenci_desc_.StencilWriteMask = 0xFF;
+    // Stencil operations if pixel is front-facing.
+    depth_stenci_desc_.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+    depth_stenci_desc_.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+    depth_stenci_desc_.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+    depth_stenci_desc_.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+    // Stencil operations if pixel is back-facing.
+    depth_stenci_desc_.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+    depth_stenci_desc_.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+    depth_stenci_desc_.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+    depth_stenci_desc_.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+    hr = d3d_device_->CreateDepthStencilState(&depth_stenci_desc_, &depth_stenci_state_);
+    FailedDirect3DDebugString(hr, false, L"create depth stencil state failed.");
+
+    ZeroMemory(&disable_depth_stenci_desc_, sizeof(disable_depth_stenci_desc_));
+    // Now create a second depth stencil state which turns off the Z buffer for 2D rendering.  The only difference is 
+    // that DepthEnable is set to false, all other parameters are the same as the other depth stencil state.
+    disable_depth_stenci_desc_.DepthEnable = false;
+    disable_depth_stenci_desc_.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+    disable_depth_stenci_desc_.DepthFunc = D3D11_COMPARISON_LESS;
+    disable_depth_stenci_desc_.StencilEnable = true;
+    disable_depth_stenci_desc_.StencilReadMask = 0xFF;
+    disable_depth_stenci_desc_.StencilWriteMask = 0xFF;
+    disable_depth_stenci_desc_.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+    disable_depth_stenci_desc_.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+    disable_depth_stenci_desc_.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+    disable_depth_stenci_desc_.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+    disable_depth_stenci_desc_.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+    disable_depth_stenci_desc_.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+    disable_depth_stenci_desc_.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+    disable_depth_stenci_desc_.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+    hr = d3d_device_->CreateDepthStencilState(&disable_depth_stenci_desc_, &disable_depth_stenci_state_);
+    FailedDirect3DDebugString(hr, false, L"create disable depth stencil state failed.");
+
+    //diable the depth buffer
+    d3d_immediate_context_->OMSetDepthStencilState(disable_depth_stenci_state_, 1);
+
+    //Setup the raster description which will determine how and what polygons will be drawn.
+    raster_desc_.AntialiasedLineEnable = false;
+    raster_desc_.CullMode = D3D11_CULL_BACK;
+    raster_desc_.DepthBias = 0;
+    raster_desc_.DepthBiasClamp = 0.0f;
+    raster_desc_.DepthClipEnable = true;
+    raster_desc_.FillMode = D3D11_FILL_SOLID;
+    raster_desc_.FrontCounterClockwise = false;
+    raster_desc_.MultisampleEnable = false;
+    raster_desc_.ScissorEnable = false;
+    raster_desc_.SlopeScaledDepthBias = 0.0f;
+    // Create the rasterizer state from the description we just filled out.
+    hr = d3d_device_->CreateRasterizerState(&raster_desc_, &raster_state_);
+    FailedDirect3DDebugString(hr, false, L"create raster state failed.");
+    //Now set the rasterizer state.
+    d3d_immediate_context_->RSSetState(raster_state_);
+
+    //world_matrix_ = XMMatrixIdentity();
+    ////an orthographic projection matrix is needed rendering in 2D in place of the regular 3D projection matrix
+    //orthographic_matrix_ = XMMatrixOrthographicLH((float)width, (float)height, SCREEN_NEAR, SCREEN_DEPTH);
+
     ID3DBlob* vertex_shader_blob = NULL;
     ID3DBlob* pixcel_shader_blob = NULL;
     ID3DBlob* err_blob = NULL;
     hr = D3DCompileFromFile(L"../DXViewer/shaders.hlsl", NULL, NULL, "DXViewerVertexShader", "vs_5_0", D3DCOMPILE_DEBUG, 0, &vertex_shader_blob, &err_blob);
     if (FAILED(hr)) {
         char* msg = err_blob == NULL ? NULL : (char*)err_blob->GetBufferPointer();
-        return false;
+        FailedDirect3DDebugString(hr, false, L"compile vertex shader failed.");
     }
     hr = D3DCompileFromFile(L"../DXViewer/shaders.hlsl", NULL, NULL, "DXViewerPixelShader", "ps_5_0", D3DCOMPILE_DEBUG, 0, &pixcel_shader_blob, &err_blob);
     if (FAILED(hr)) {
         char* msg = err_blob == NULL ? NULL : (char*)err_blob->GetBufferPointer();
-        return false;
+        FailedDirect3DDebugString(hr, false, L"compile pixel shader failed.");
     }
 
-    ID3D11VertexShader* vertex_shader;
-    d3d_device_->CreateVertexShader(vertex_shader_blob->GetBufferPointer(), vertex_shader_blob->GetBufferSize(), NULL, &vertex_shader);
-    ID3D11PixelShader* pixel_shader;
-    d3d_device_->CreatePixelShader(pixcel_shader_blob->GetBufferPointer(), pixcel_shader_blob->GetBufferSize(), NULL, &pixel_shader);
     ID3D11InputLayout* input_layout = NULL;
-
-    D3D11_INPUT_ELEMENT_DESC video_vertex_desc[4] = {
-        { "POSITION",0, DXGI_FORMAT_R32G32B32_FLOAT ,0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "NORMAL",0,DXGI_FORMAT_R32_FLOAT,0,12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR",0,DXGI_FORMAT_R32G32B32A32_FLOAT ,0, 13, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,0, 29, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+    //This struct describes a single vertex property.
+    /*
+        Semantic	Values
+        POSITION	float, float, float
+        POSITIONT	float, float, float
+        COLOR	    float, float, float, float
+        PSIZE	    float
+    */
+    D3D11_INPUT_ELEMENT_DESC simple_video_vertex_desc[2] = {
+        { "POSITION",0, DXGI_FORMAT_R32G32B32_FLOAT ,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "COLOR",0,DXGI_FORMAT_R32G32B32A32_FLOAT ,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
     };
-    d3d_device_->CreateInputLayout(video_vertex_desc, 4, vertex_shader_blob->GetBufferPointer(), vertex_shader_blob->GetBufferSize(), &input_layout);
 
+    ID3D11VertexShader* vertex_shader;
+    hr = d3d_device_->CreateVertexShader(vertex_shader_blob->GetBufferPointer(), vertex_shader_blob->GetBufferSize(), NULL, &vertex_shader);
+    FailedDirect3DDebugString(hr, false, L"create vertex shader failed.");
+    ID3D11PixelShader* pixel_shader;
+    hr = d3d_device_->CreatePixelShader(pixcel_shader_blob->GetBufferPointer(), pixcel_shader_blob->GetBufferSize(), NULL, &pixel_shader);
+    FailedDirect3DDebugString(hr, false, L"create pixel shader failed.");
+    
+    d3d_immediate_context_->VSSetShader(vertex_shader, NULL, 0);
+    d3d_immediate_context_->PSSetShader(pixel_shader,NULL, 0);
 
-    vertex_shader_blob->Release();
-    pixcel_shader_blob->Release();
-    err_blob == NULL ? NULL : err_blob->Release();
+    hr = d3d_device_->CreateInputLayout(simple_video_vertex_desc, 2, vertex_shader_blob->GetBufferPointer(), vertex_shader_blob->GetBufferSize(), &input_layout);
+    FailedDirect3DDebugString(hr, false, L"create input layout failed.");
+    d3d_immediate_context_->IASetInputLayout(input_layout);
+
+    ReleaseCOMInterface(vertex_shader_blob);
+    ReleaseCOMInterface(pixcel_shader_blob);
+    ReleaseCOMInterface(err_blob);
+    ReleaseCOMInterface(input_layout);
+    ReleaseCOMInterface(vertex_shader);
+    ReleaseCOMInterface(pixel_shader);
+
+    //´´½¨¶¥µã»º³å
+    SIMPLE_VERTEX simple_vertices[] = {
+        { DirectX::XMFLOAT3(0.0f, 0.5f, 0.0f), DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) },
+        { DirectX::XMFLOAT3(0.5f, -0.5f, 0.0f), DirectX::XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) },
+        { DirectX::XMFLOAT3(-0.5f, -0.5f, 0.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) }
+    };
+
+    D3D11_BUFFER_DESC vbd;
+    ZeroMemory(&vbd, sizeof(vbd));
+    //D3D11_USAGE_DYNAMIC: CPU Write Only; GPU Read Only
+    vbd.Usage = D3D11_USAGE_DYNAMIC;
+    vbd.ByteWidth = sizeof(VIDEO_VERTEX) * 3;
+    //BindFlags tells Direct3D what kind of buffer to make
+    vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    vbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE; //no CPU access necessary;
+    vbd.MiscFlags = 0;
+
+    //D3D11_SUBRESOURCE_DATA init_data;
+    //ZeroMemory(&init_data, sizeof(init_data));
+    //init_data.pSysMem = vertices; //Memory in CPU to copy in to GPU
+    //hr = d3d_device_->CreateBuffer(&vbd, &init_data, &vertex_buffer_);
+
+    hr = d3d_device_->CreateBuffer(&vbd, NULL, &vertex_buffer_);
+    FailedDirect3DDebugString(hr, false, L"create vertex buffer failed.");
+    D3D11_MAPPED_SUBRESOURCE mapped_resource;
+    //like old "lock" in d3d9
+    //D3D11_MAP_WRITE_DISCARD: Previous contents of buffer are erased, and new buffer is opened for writing.
+    d3d_immediate_context_->Map(vertex_buffer_, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &mapped_resource);
+    FailedDirect3DDebugString(hr, false, L"map vertex buffer failed.");
+    memcpy(mapped_resource.pData, simple_vertices, sizeof(simple_vertices));
+    d3d_immediate_context_->Unmap(vertex_buffer_, NULL);
+
+    
 
     width_ = width;
     height_ = height;
@@ -176,6 +291,7 @@ void GraphicEngine::DrawScene() {
     assert(d3d_immediate_context_);
     assert(d3d_swap_chain_);
 
+    //switch the back buffer and the front buffer
     d3d_swap_chain_->Present(0, 0);
 }
 
@@ -185,7 +301,16 @@ void GraphicEngine::UpdateTestScene() {
     assert(d3d_swap_chain_);
 
     XMVECTORF32 blue = { 0.0f,0.0f,1.0f,1.0f };
-    d3d_immediate_context_->ClearRenderTargetView(d3d_render_target_view_, reinterpret_cast<const float*>(&blue));
+    //d3d_immediate_context_->ClearRenderTargetView(d3d_render_target_view_, reinterpret_cast<const float*>(&blue));
+
+    UINT offset = 0;
+    UINT stride = sizeof(SIMPLE_VERTEX);
+    d3d_immediate_context_->IASetVertexBuffers(0, 1, &vertex_buffer_, &stride, &offset);
+    d3d_immediate_context_->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    //draw the vertex buffer to the back buffer
+    d3d_immediate_context_->Draw(3, 0);
+
+    return;
 
     ID3D11Texture2D* backBuffer;
     HRESULT hr = d3d_swap_chain_->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
