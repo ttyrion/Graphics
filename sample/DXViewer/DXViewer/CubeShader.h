@@ -1,13 +1,13 @@
 #pragma once
 
-class ColorShader
+class CubeShader
 {
 public:
-    ColorShader(GraphicEngine* engine);
-    ~ColorShader();
-    
+    CubeShader(GraphicEngine* engine);
+    ~CubeShader();
+
     bool Init();
-    void Release();    
+    void Release();
     bool SetShaderParameters(const DirectX::XMMATRIX& world, const DirectX::XMMATRIX& view, const DirectX::XMMATRIX& projection);
     void Render(const UINT index_count);
 

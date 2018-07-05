@@ -1,13 +1,13 @@
 #pragma once
 #include "Graphic.h"
-#include <DirectXMath.h>
-#include "ColorShader.h"
+#include "CubeShader.h"
 
-class ColorTriangle : public Graphic
+class Cube :
+    public Graphic
 {
 public:
-    ColorTriangle(GraphicEngine* engine);
-    ~ColorTriangle();
+    Cube(GraphicEngine* engine);
+    ~Cube();
     void Release() override;
     bool SetInputLayout() override;
     void CreateInputBuffer() override;
@@ -16,6 +16,6 @@ public:
     void Render() override;
 
 private:
-    ColorShader shader_;
+    CubeShader shader_;
 };
 

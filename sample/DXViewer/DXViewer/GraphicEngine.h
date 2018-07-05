@@ -4,6 +4,7 @@
 #include <vector>
 #include "Graphic.h"
 #include "ColorCamera.h"
+#include "CubeCamera.h"
 
 #define SCREEN_DEPTH  1000.0f
 #define SCREEN_NEAR  0.1f
@@ -82,7 +83,8 @@ private:
     ID3D11SamplerState* sample_state_ = NULL;
 
     Graphic* graphic_ = nullptr;
-    ColorCamera camera_;
+    //ColorCamera camera_;
+    CubeCamera camera_;
     unsigned int width_ = 0;
     unsigned int height_ = 0;
 };

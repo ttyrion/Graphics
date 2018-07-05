@@ -1,43 +1,43 @@
 #include "stdafx.h"
-#include "ColorShader.h"
+#include "CubeShader.h"
 #include <d3dcompiler.h>
 #include "utility.h"
 
 using namespace DirectX;
 
-ColorShader::ColorShader(GraphicEngine* engine) {
+CubeShader::CubeShader(GraphicEngine* engine) {
     engine_ = engine;
 }
 
 
-ColorShader::~ColorShader() {
+CubeShader::~CubeShader() {
 }
 
-bool ColorShader::Init() {
+bool CubeShader::Init() {
     CreateShaderAndInputLayout();
     CreateMatrixBuffer();
-    
+
     return true;
 }
 
-void ColorShader::Release() {
+void CubeShader::Release() {
     engine_ = NULL;
     ReleaseCOMInterface(matrix_buffer_);
 }
 
-bool ColorShader::CreateShaderAndInputLayout() {
+bool CubeShader::CreateShaderAndInputLayout() {
     if (!engine_) {
         return false;
     }
     ID3DBlob* vertex_shader_blob = NULL;
     ID3DBlob* pixcel_shader_blob = NULL;
     ID3DBlob* err_blob = NULL;
-    HRESULT hr = D3DCompileFromFile(L"../DXViewer/ColorTriangle.hlsl", NULL, NULL, "ColorTriangleVertexShader", "vs_5_0", D3DCOMPILE_DEBUG, 0, &vertex_shader_blob, &err_blob);
+    HRESULT hr = D3DCompileFromFile(L"../DXViewer/Cube.hlsl", NULL, NULL, "CubeVertexShader", "vs_5_0", D3DCOMPILE_DEBUG, 0, &vertex_shader_blob, &err_blob);
     if (FAILED(hr)) {
         char* msg = err_blob == NULL ? NULL : (char*)err_blob->GetBufferPointer();
         FailedDirect3DDebugString(hr, false, L"compile vertex shader failed.");
     }
-    hr = D3DCompileFromFile(L"../DXViewer/ColorTriangle.hlsl", NULL, NULL, "ColorTrianglePixelShader", "ps_5_0", D3DCOMPILE_DEBUG, 0, &pixcel_shader_blob, &err_blob);
+    hr = D3DCompileFromFile(L"../DXViewer/Cube.hlsl", NULL, NULL, "CubePixelShader", "ps_5_0", D3DCOMPILE_DEBUG, 0, &pixcel_shader_blob, &err_blob);
     if (FAILED(hr)) {
         char* msg = err_blob == NULL ? NULL : (char*)err_blob->GetBufferPointer();
         FailedDirect3DDebugString(hr, false, L"compile pixel shader failed.");
@@ -81,34 +81,33 @@ bool ColorShader::CreateShaderAndInputLayout() {
     return true;
 }
 
-bool ColorShader::CreateMatrixBuffer() {
+bool CubeShader::CreateMatrixBuffer() {
     D3D11_BUFFER_DESC matrix_buffer_desc;
     // Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
-    matrix_buffer_desc.Usage = D3D11_USAGE_DYNAMIC;
+    matrix_buffer_desc.Usage = D3D11_USAGE_DEFAULT;
     matrix_buffer_desc.ByteWidth = sizeof(MATRIX_BUFFER);           //size
     matrix_buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;      //type
-    matrix_buffer_desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    matrix_buffer_desc.CPUAccessFlags = 0;
     matrix_buffer_desc.MiscFlags = 0;
     matrix_buffer_desc.StructureByteStride = 0;
 
     // Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
     HRESULT hr = engine_->GetDevice()->CreateBuffer(&matrix_buffer_desc, NULL, &matrix_buffer_);
-    FailedDirect3DDebugString(hr,false,L"create matrix buffer in colorshader failed.");
+    FailedDirect3DDebugString(hr, false, L"create matrix buffer in cubeshader failed.");
 
     return true;
 }
 
-bool ColorShader::SetShaderParameters(const XMMATRIX& w, const XMMATRIX &v, const XMMATRIX& p) {
-    XMMATRIX world = w;
-    XMMATRIX view = v;
-    XMMATRIX projection = p;
-
+bool CubeShader::SetShaderParameters(const XMMATRIX& w, const XMMATRIX &v, const XMMATRIX& p) {
     if (!matrix_buffer_) {
         Direct3DDebugString(L"Error in set shader parameters: matrix buffer is null.");
 
         return false;
     }
-
+    
+    XMMATRIX world = w;
+    XMMATRIX view = v;
+    XMMATRIX projection = p;
     world = XMMatrixTranspose(world);
     view = XMMatrixTranspose(view);
     projection = XMMatrixTranspose(projection);
@@ -123,9 +122,9 @@ bool ColorShader::SetShaderParameters(const XMMATRIX& w, const XMMATRIX &v, cons
     return true;
 }
 
-void ColorShader::Render(const UINT index_count) {
+void CubeShader::Render(const UINT index_count) {
     if (!engine_) {
-        Direct3DDebugString(L"Error in colorshader rendering: engine null.");
+        Direct3DDebugString(L"Error in cubeshader rendering: engine null.");
         return;
     }
 

@@ -153,6 +153,9 @@
     <ClInclude Include="ColorCamera.h" />
     <ClInclude Include="ColorShader.h" />
     <ClInclude Include="ColorTriangle.h" />
+    <ClInclude Include="Cube.h" />
+    <ClInclude Include="CubeCamera.h" />
+    <ClInclude Include="CubeShader.h" />
     <ClInclude Include="DXViewer.h" />
     <ClInclude Include="DXViewerApp.h" />
     <ClInclude Include="Graphic.h" />
@@ -166,6 +169,9 @@
     <ClCompile Include="ColorCamera.cpp" />
     <ClCompile Include="ColorShader.cpp" />
     <ClCompile Include="ColorTriangle.cpp" />
+    <ClCompile Include="Cube.cpp" />
+    <ClCompile Include="CubeCamera.cpp" />
+    <ClCompile Include="CubeShader.cpp" />
     <ClCompile Include="DXViewer.cpp" />
     <ClCompile Include="DXViewerApp.cpp" />
     <ClCompile Include="Graphic.cpp" />
@@ -192,6 +198,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ColorTriangle.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Cube.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

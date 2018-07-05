@@ -6,6 +6,7 @@
 #include <fstream>
 #include <vector>
 #include "ColorTriangle.h"
+#include "Cube.h"
 
 using namespace DirectX;
 
@@ -168,7 +169,8 @@ bool GraphicEngine::InitDirect3D(HWND render_window, const unsigned int width, c
 
     camera_.GetPosition() = XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f);
 
-    graphic_ = new ColorTriangle(this);
+    //graphic_ = new ColorTriangle(this);
+    graphic_ = new Cube(this);
     bool succeed = graphic_->SetInputLayout(); 
     if (!succeed) {
         FailedDirect3DDebugString(E_FAIL, false, L"set input layout failed.");
@@ -519,10 +521,10 @@ void GraphicEngine::UpdateScene() {
     d3d_immediate_context_->ClearRenderTargetView(d3d_render_target_view_, reinterpret_cast<const float*>(&blue));
     d3d_immediate_context_->ClearDepthStencilView(d3d_depth_stencil_view_, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-    //XMMATRIX view_matrix = camera_.GetViewMatrix();
-    //XMMATRIX world_matrix = XMMatrixIdentity();
-    //XMMATRIX projection_matrix = XMMatrixPerspectiveFovLH(width_, height_, 0.1f, 1000.0f);
-    //graphic_->SetShaderParameters(world_matrix, view_matrix, projection_matrix);
+    XMMATRIX world_matrix = XMMatrixIdentity();
+    XMMATRIX view_matrix = camera_.GetViewMatrix();
+    XMMATRIX projection_matrix = XMMatrixPerspectiveFovLH(XM_PIDIV2, width_/(float)height_, 0.01f, 20.0f);
+    graphic_->SetShaderParameters(world_matrix, view_matrix, projection_matrix);
     graphic_->Render();
 }
 

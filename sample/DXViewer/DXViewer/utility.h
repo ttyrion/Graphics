@@ -9,3 +9,17 @@
 }
 
 #define ReleaseCOMInterface(x) { if(x){ x->Release(); x = 0; } }
+
+typedef struct
+{
+    DirectX::XMFLOAT3 position;
+    DirectX::XMFLOAT4 color;
+} ColorVertex;
+
+typedef struct
+{
+    DirectX::XMMATRIX world;
+    DirectX::XMMATRIX view;
+    DirectX::XMMATRIX projection;
+
+} MATRIX_BUFFER;

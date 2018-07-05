@@ -19,6 +19,9 @@
     <Filter Include="color">
       <UniqueIdentifier>{f53337c9-1872-401f-8aac-82e0eaaafbe4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="cube">
+      <UniqueIdentifier>{88210ae8-6d10-4dc7-bc78-a313bbe5cc12}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -57,6 +60,15 @@
     <ClInclude Include="ColorCamera.h">
       <Filter>color</Filter>
     </ClInclude>
+    <ClInclude Include="Cube.h">
+      <Filter>cube</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeShader.h">
+      <Filter>cube</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeCamera.h">
+      <Filter>cube</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -86,6 +98,15 @@
     <ClCompile Include="ColorCamera.cpp">
       <Filter>color</Filter>
     </ClCompile>
+    <ClCompile Include="Cube.cpp">
+      <Filter>cube</Filter>
+    </ClCompile>
+    <ClCompile Include="CubeShader.cpp">
+      <Filter>cube</Filter>
+    </ClCompile>
+    <ClCompile Include="CubeCamera.cpp">
+      <Filter>cube</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DXViewer.rc">
@@ -105,6 +126,9 @@
       <Filter>shader</Filter>
     </None>
     <None Include="ColorTriangle.hlsl">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="Cube.hlsl">
       <Filter>shader</Filter>
     </None>
   </ItemGroup>
