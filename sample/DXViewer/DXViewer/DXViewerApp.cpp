@@ -80,6 +80,7 @@ void DXViewerApp::Run() {
     while (true) {
         if (::PeekMessage(&msg, 0, 0, 0, PM_REMOVE)) {
             if (msg.message == WM_QUIT) {
+                engine_.ReleaseDirect3D();
                 break;
             }
 

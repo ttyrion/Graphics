@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="shader">
+      <UniqueIdentifier>{55f00303-ada5-4dc9-9312-78b2c5c3fd07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="color">
+      <UniqueIdentifier>{f53337c9-1872-401f-8aac-82e0eaaafbe4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -39,6 +45,18 @@
     <ClInclude Include="utility.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Graphic.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorShader.h">
+      <Filter>color</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorTriangle.h">
+      <Filter>color</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorCamera.h">
+      <Filter>color</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -56,6 +74,18 @@
     <ClCompile Include="utility.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Graphic.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorShader.cpp">
+      <Filter>color</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorTriangle.cpp">
+      <Filter>color</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorCamera.cpp">
+      <Filter>color</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DXViewer.rc">
@@ -71,6 +101,11 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders.hlsl" />
+    <None Include="shaders.hlsl">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="ColorTriangle.hlsl">
+      <Filter>shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

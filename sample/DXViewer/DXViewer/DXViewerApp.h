@@ -22,7 +22,7 @@ private:
 private:
     HINSTANCE instance_ = NULL;
     HWND window_ = NULL;
-    unsigned int width_ = 800;
+    unsigned int width_ = 1000;
     unsigned int height_ = 600;
     bool paused_ = true;
 

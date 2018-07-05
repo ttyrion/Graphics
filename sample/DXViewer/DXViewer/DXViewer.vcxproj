@@ -150,8 +150,12 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ColorCamera.h" />
+    <ClInclude Include="ColorShader.h" />
+    <ClInclude Include="ColorTriangle.h" />
     <ClInclude Include="DXViewer.h" />
     <ClInclude Include="DXViewerApp.h" />
+    <ClInclude Include="Graphic.h" />
     <ClInclude Include="GraphicEngine.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -159,8 +163,12 @@
     <ClInclude Include="utility.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ColorCamera.cpp" />
+    <ClCompile Include="ColorShader.cpp" />
+    <ClCompile Include="ColorTriangle.cpp" />
     <ClCompile Include="DXViewer.cpp" />
     <ClCompile Include="DXViewerApp.cpp" />
+    <ClCompile Include="Graphic.cpp" />
     <ClCompile Include="GraphicEngine.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -179,6 +187,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ColorTriangle.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>
