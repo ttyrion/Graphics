@@ -31,6 +31,7 @@ void I420Frame::CreateInputBuffer() {
     }
 
     VIDEO_VERTEX vertices[] = {
+        //顶点坐标、顶点color，顶点坐标对应的纹理坐标
         { XMFLOAT3(-1.0f, 1.0f, 0.0f),XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 0.0f) },
         { XMFLOAT3(1.0f, 1.0f, 0.0f),XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 0.0f) },
         { XMFLOAT3(1.0f, -1.0f, 0.0f),XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 1.0f) },

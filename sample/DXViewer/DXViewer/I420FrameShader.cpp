@@ -91,6 +91,7 @@ bool I420FrameShader::CreateShaderResource(const int frame_width, const int fram
     hr = engine_->GetDevice()->CreateTexture2D(&tex_desc, NULL, &texture_planes_[2]);
     CD3D11_SHADER_RESOURCE_VIEW_DESC resource_view_desc(D3D11_SRV_DIMENSION_TEXTURE2D);
     for (int i = 0; i < 3; ++i) {
+        //给每一个纹理资源都创建一个纹理视图，这样资源才能被GPU访问: 真正被绑定到渲染管线的是资源视图，而不是资源
         hr = engine_->GetDevice()->CreateShaderResourceView(texture_planes_[i], 
             &resource_view_desc, &texture_resource_views_[i]);
     }
@@ -118,6 +119,11 @@ bool I420FrameShader::UpdateShaderResource(const VIDEO_FRAME& frame, const int f
             break;
         }
 
+        /*纹理资源更新方式：
+        1.创建纹理时选择D3D11_USAGE_DEFAULT（GPU可读写）,然后只用UpdateSubresource更新纹理。
+        2.创建纹理时选择D3D11_USAGE_DYNAMIC（GPU-R,CPU-W）加上D3D11_CPU_ACCESS_WRITE, 然后用 Map->memcpy->Unmap方式。
+        第一种方式，即UpdateSubresource效率更高。
+        */
         engine_->GetDeviceContext()->UpdateSubresource(texture_planes_[i], 0, NULL, frame.data[i].data(), frame.linesize[i], 0);
     }
 

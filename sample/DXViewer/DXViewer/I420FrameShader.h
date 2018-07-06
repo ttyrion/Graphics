@@ -20,7 +20,9 @@ private:
 
     GraphicEngine* engine_ = NULL;
     ID3D11Buffer* matrix_buffer_ = NULL;
+    //控制着色器
     ID3D11SamplerState* sampler_state_ = NULL;
+    //用三层文理资源分别访问一帧视频的y,u,v数据，相应地，着色器中也要定义三个纹理资源
     ID3D11Texture2D* texture_planes_[3] = { NULL };
     ID3D11ShaderResourceView* texture_resource_views_[3] = { NULL };
     UINT frame_width_ = 0;
