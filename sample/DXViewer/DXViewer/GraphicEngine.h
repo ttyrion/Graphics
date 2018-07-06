@@ -5,30 +5,11 @@
 #include "Graphic.h"
 #include "ColorCamera.h"
 #include "CubeCamera.h"
+#include "I420FrameCamera.h"
+#include "utility.h"
 
 #define SCREEN_DEPTH  1000.0f
 #define SCREEN_NEAR  0.1f
-
-typedef struct {
-    DirectX::XMFLOAT3    pos;           // vertex untransformed position
-    DirectX::XMFLOAT2    tex;   // texture relative coordinates
-} VIDEO_VERTEX;
-
-typedef struct {
-    DirectX::XMFLOAT4X4 world;
-    DirectX::XMFLOAT4X4 view;
-    DirectX::XMFLOAT4X4 projection;
-} VIDEO_MATRIX_BUFFER;
-
-typedef struct {
-    DirectX::XMFLOAT3    position;  //x, y, z
-    DirectX::XMFLOAT4    color;     //r, g, b, a
-} SIMPLE_VERTEX;
-
-typedef struct {
-    std::vector<char> data[3] = { std::vector<char>(0,0) };
-    int linesize[3] = { 0 };
-} VIDEO_FRAME;
 
 class GraphicEngine
 {
@@ -47,14 +28,6 @@ public:
 
 private:
     void UpdateTestScene();
-    bool SetShaderResource();
-    bool UpdateShaderResource(const VIDEO_FRAME& frame);
-    bool SetSimpleVertexInputLayout();
-    bool SetVideoVertexInputLayout();
-    bool CreateMatrices();
-    bool CreateMatrixBuffer();
-    bool CreateSampleState();
-
     void Release();
 
 private:
@@ -72,19 +45,11 @@ private:
     D3D11_RASTERIZER_DESC raster_desc_;
     ID3D11RasterizerState* raster_state_ = NULL;
     UINT x4_msaa_uality_ = 0;
-    ID3D11Buffer* vertex_buffer_ = NULL;
-    DirectX::XMMATRIX world_matrix_;
-    DirectX::XMMATRIX view_matrix_;
-    DirectX::XMMATRIX projection_matrix_;
-
-    ID3D11Texture2D* texture_planes_[3] = { NULL };
-    ID3D11ShaderResourceView* texture_resource_views_[3] = { NULL };
-    ID3D11Buffer* matrix_buffer_ = NULL;
-    ID3D11SamplerState* sample_state_ = NULL;
 
     Graphic* graphic_ = nullptr;
     //ColorCamera camera_;
-    CubeCamera camera_;
+    //CubeCamera camera_;
+    I420FrameCamera camera_;
     unsigned int width_ = 0;
     unsigned int height_ = 0;
 };

@@ -160,6 +160,9 @@
     <ClInclude Include="DXViewerApp.h" />
     <ClInclude Include="Graphic.h" />
     <ClInclude Include="GraphicEngine.h" />
+    <ClInclude Include="I420Frame.h" />
+    <ClInclude Include="I420FrameCamera.h" />
+    <ClInclude Include="I420FrameShader.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -176,6 +179,9 @@
     <ClCompile Include="DXViewerApp.cpp" />
     <ClCompile Include="Graphic.cpp" />
     <ClCompile Include="GraphicEngine.cpp" />
+    <ClCompile Include="I420Frame.cpp" />
+    <ClCompile Include="I420FrameCamera.cpp" />
+    <ClCompile Include="I420FrameShader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -203,6 +209,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Cube.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="I420Frame.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

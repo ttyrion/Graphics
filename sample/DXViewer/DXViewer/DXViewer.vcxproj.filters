@@ -22,6 +22,9 @@
     <Filter Include="cube">
       <UniqueIdentifier>{88210ae8-6d10-4dc7-bc78-a313bbe5cc12}</UniqueIdentifier>
     </Filter>
+    <Filter Include="I420">
+      <UniqueIdentifier>{d2b744d1-2f10-4d66-bfc1-8cfdb2f2f5c8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -69,6 +72,15 @@
     <ClInclude Include="CubeCamera.h">
       <Filter>cube</Filter>
     </ClInclude>
+    <ClInclude Include="I420Frame.h">
+      <Filter>I420</Filter>
+    </ClInclude>
+    <ClInclude Include="I420FrameShader.h">
+      <Filter>I420</Filter>
+    </ClInclude>
+    <ClInclude Include="I420FrameCamera.h">
+      <Filter>I420</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -107,6 +119,15 @@
     <ClCompile Include="CubeCamera.cpp">
       <Filter>cube</Filter>
     </ClCompile>
+    <ClCompile Include="I420Frame.cpp">
+      <Filter>I420</Filter>
+    </ClCompile>
+    <ClCompile Include="I420FrameShader.cpp">
+      <Filter>I420</Filter>
+    </ClCompile>
+    <ClCompile Include="I420FrameCamera.cpp">
+      <Filter>I420</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DXViewer.rc">
@@ -129,6 +150,9 @@
       <Filter>shader</Filter>
     </None>
     <None Include="Cube.hlsl">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="I420Frame.hlsl">
       <Filter>shader</Filter>
     </None>
   </ItemGroup>
