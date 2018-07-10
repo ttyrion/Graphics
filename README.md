@@ -38,10 +38,10 @@ https://docs.microsoft.com/zh-cn/windows/desktop/directx-sdk--august-2009-
 Direct3DDebugString(L"ResizeBuffers width=" << width_ << L" height=" << height_);  
 开启DebugView工具即可查看日志输出过程。  
   
-2、[MSDN上关于YUV格式以及渲染的文档] (https://docs.microsoft.com/zh-cn/windows/desktop/medfound/recommended-8-bit-yuv-formats-for-video-rendering)  
-3、[Direct3D Tutorial Win32 Sample(有些很重要，讲得也很精彩的内容，如Tutorial 4：3D空间)] (https://code.msdn.microsoft.com/Direct3D-Tutorial-Win32-829979ef)  
-  
-  
+2、![MSDN上关于YUV格式以及渲染的文档] (https://docs.microsoft.com/zh-cn/windows/desktop/medfound/recommended-8-bit-yuv-formats-for-video-rendering)  
+3、![Direct3D Tutorial Win32 Sample(有些很重要，讲得也很精彩的内容，如Tutorial 4：3D空间)] (https://code.msdn.microsoft.com/Direct3D-Tutorial-Win32-829979ef)   
+4、![Learn Computer Graphics] (https://www.scratchapixel.com/index.php?redirect)  
+
   
   
 
