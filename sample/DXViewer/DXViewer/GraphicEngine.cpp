@@ -112,7 +112,11 @@ bool GraphicEngine::InitDirect3D(HWND render_window, const unsigned int width, c
 
     //Setup the raster description which will determine how and what polygons will be drawn.
     raster_desc_.AntialiasedLineEnable = false;
-    raster_desc_.CullMode = D3D11_CULL_BACK;
+    /*
+        默认情况下，Direct3D将按顺时针顺序定义的顶点视为正面，并且除正面之外的所有面都是背面。
+        CullMode可以指定正面或者背面被剔除，或者两者都不剔除。
+    */
+    raster_desc_.CullMode = D3D11_CULL_NONE;  //表示指定方向的三角形不会被绘制
     raster_desc_.DepthBias = 0;
     raster_desc_.DepthBiasClamp = 0.0f;
     raster_desc_.DepthClipEnable = true;
@@ -244,13 +248,13 @@ void GraphicEngine::ReSizeRender(const unsigned int width, const unsigned int he
     // Bind the render target view and depth/stencil view to the pipeline.
     d3d_immediate_context_->OMSetRenderTargets(1, &d3d_render_target_view_, d3d_depth_stencil_view_);
 
-    d3d_screen_viewport.TopLeftX = 0;
-    d3d_screen_viewport.TopLeftY = 0;
-    d3d_screen_viewport.Width = static_cast<float>(width);
-    d3d_screen_viewport.Height = static_cast<float>(height);
-    d3d_screen_viewport.MinDepth = 0.0f;
-    d3d_screen_viewport.MaxDepth = 1.0f;
-    d3d_immediate_context_->RSSetViewports(1, &d3d_screen_viewport);
+    d3d_screen_viewport_.TopLeftX = 0;
+    d3d_screen_viewport_.TopLeftY = 0;
+    d3d_screen_viewport_.Width = static_cast<float>(width);
+    d3d_screen_viewport_.Height = static_cast<float>(height);
+    d3d_screen_viewport_.MinDepth = 0.0f;
+    d3d_screen_viewport_.MaxDepth = 1.0f;
+    d3d_immediate_context_->RSSetViewports(1, &d3d_screen_viewport_);
 
     width_ = width;
     height_ = height;
@@ -258,14 +262,39 @@ void GraphicEngine::ReSizeRender(const unsigned int width, const unsigned int he
 
 void GraphicEngine::UpdateScene() {
     //UpdateTestScene();
-    XMVECTORF32 blue = { 0.0f,0.0f,1.0f,1.0f };
+    XMVECTORF32 blue = { 0.0f, 0.0f, 1.0f, 1.0f };
     d3d_immediate_context_->ClearRenderTargetView(d3d_render_target_view_, reinterpret_cast<const float*>(&blue));
     d3d_immediate_context_->ClearDepthStencilView(d3d_depth_stencil_view_, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-    //XMMATRIX world_matrix = XMMatrixIdentity();
-    //XMMATRIX view_matrix = camera_.GetViewMatrix();
-    //XMMATRIX projection_matrix = XMMatrixPerspectiveFovLH(XM_PIDIV2, width_/(float)height_, 1.0f, 2.0f);
-    //graphic_->SetShaderParameters(world_matrix, view_matrix, projection_matrix);
+    XMMATRIX world_matrix = XMMatrixScaling(0.5f, 0.5f, 1.0f);
+    //XMMATRIX translation = XMMatrixTranslation(-0.5f, -0.5f, -0.5f);
+    //world_matrix *= translation;
+
+    camera_.SetPosition(0.0f, 0.0f, 1.0f);
+    camera_.SetLook(XMFLOAT3(0.0f, 0.0f, 1.0f));
+    camera_.SetRight(XMFLOAT3(1.0f, 0.0f, 0.0f));
+    camera_.SetUp(XMFLOAT3(0.0f, 1.0f, 0.0f));
+    camera_.Yaw(XM_PIDIV2/4);
+    //camera_.Walk(direction::DOWN, 4.0f);
+    camera_.UpdateView();
+    XMMATRIX view_matrix = camera_.GetViewMatrix();
+    XMMATRIX projection_matrix = XMMatrixPerspectiveFovLH(XM_PIDIV2, width_ / (float)height_, 0.1f, 100.0f);
+
+    static float d = 5.0;
+
+    XMMATRIX projection = {
+        {1,0,0,0},
+        {0,1,0,0},
+        {0,0,1,1 / 1.0f},
+        { 0,0,0,0 }
+    };
+
+    d -= 0.5;
+    if (d <= 0) {
+        d = 5;
+    }
+
+    graphic_->SetShaderParameters(world_matrix, view_matrix, projection);
     graphic_->Render();
 }
 

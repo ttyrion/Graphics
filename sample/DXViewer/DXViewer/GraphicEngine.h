@@ -7,6 +7,7 @@
 #include "CubeCamera.h"
 #include "I420FrameCamera.h"
 #include "utility.h"
+#include "FPSCamera.h"
 
 #define SCREEN_DEPTH  1000.0f
 #define SCREEN_NEAR  0.1f
@@ -41,7 +42,7 @@ private:
     ID3D11Texture2D* d3d_depth_stencil_buffer_ = NULL;
     ID3D11RenderTargetView* d3d_render_target_view_ = NULL;
     ID3D11DepthStencilView* d3d_depth_stencil_view_ = NULL;
-    D3D11_VIEWPORT d3d_screen_viewport;
+    D3D11_VIEWPORT d3d_screen_viewport_;
     D3D11_RASTERIZER_DESC raster_desc_;
     ID3D11RasterizerState* raster_state_ = NULL;
     UINT x4_msaa_uality_ = 0;
@@ -49,7 +50,7 @@ private:
     Graphic* graphic_ = nullptr;
     //ColorCamera camera_;
     //CubeCamera camera_;
-    I420FrameCamera camera_;
+    FPSCamera camera_;
     unsigned int width_ = 0;
     unsigned int height_ = 0;
 };

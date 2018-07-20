@@ -71,6 +71,9 @@ bool DXViewerApp::Init() {
     ::ShowWindow(window_, SW_SHOW);
     ::UpdateWindow(window_);
 
+    //SetWindowLong(window_, GWL_EXSTYLE, WS_EX_LAYERED);
+    //SetLayeredWindowAttributes(window_, RGB(0, 0, 255), 0, LWA_COLORKEY);
+
     return true;
 }
 

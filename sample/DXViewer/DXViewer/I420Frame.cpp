@@ -32,15 +32,34 @@ void I420Frame::CreateInputBuffer() {
 
     VIDEO_VERTEX vertices[] = {
         //顶点坐标、顶点color，顶点坐标对应的纹理坐标
-        { XMFLOAT3(-1.0f, 1.0f, 0.0f),XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 0.0f) },
-        { XMFLOAT3(1.0f, 1.0f, 0.0f),XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 0.0f) },
-        { XMFLOAT3(1.0f, -1.0f, 0.0f),XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 1.0f) },
-        { XMFLOAT3(-1.0f, -1.0f, 0.0f),XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 1.0f) }
+        { XMFLOAT3(-2.0f, -2.0f, 2.0f),XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 1.0f) },
+        { XMFLOAT3(2.0f, -2.0f, 2.0f),XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 1.0f) },
+        { XMFLOAT3(2.0f, 2.0f, 2.0f),XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 0.0f) },
+        { XMFLOAT3(-2.0f, 2.0f, 2.0f),XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 0.0f) }
+
+        //{ XMFLOAT3(0.0f, 0.0f, 0.0f),XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 1.0f) },
+        //{ XMFLOAT3(10.0f, 0.0f, 0.0f),XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 1.0f) },
+        //{ XMFLOAT3(10.0f, 10.0f, 0.0f),XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 0.0f) },
+        //{ XMFLOAT3(0.0f, 10.0f, 0.0f),XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 0.0f) },
+        //{ XMFLOAT3(0.0f, 0.0f, 10.0f),XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 1.0f) },
+        //{ XMFLOAT3(10.0f, 0.0f, 10.0f),XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 1.0f) },
+        //{ XMFLOAT3(10.0f, 10.0f, 10.0f),XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 0.0f) },
+        //{ XMFLOAT3(0.0f, 10.0f, 10.0f),XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 0.0f) }
     };
 
     WORD indices[index_count] = {
         0,1,2,
-        0,2,3
+        0,2,3 //near z
+        //4,5,6,
+        //4,6,7 //far z
+        //3,2,6,
+        //3,6,7, //top
+        //0,4,5,
+        //0,5,1, //down
+        //4,0,3,
+        //4,3,7, //left
+        //1,5,6,
+        //1,6,2, //right
     };
 
     //description of the static vertex buffer.
@@ -108,7 +127,7 @@ void I420Frame::Render() {
         frame.linesize[1] = 448;
         frame.linesize[2] = 448;
         
-        int count_of_y = frame.linesize[0] * frame_height;
+        int count_of_y = frame_width * frame_height;
         frame.data[0].resize(count_of_y, 0);
         ifs2.read(frame.data[0].data(), count_of_y);
 

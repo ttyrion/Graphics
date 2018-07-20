@@ -81,6 +81,9 @@
     <ClInclude Include="I420FrameCamera.h">
       <Filter>I420</Filter>
     </ClInclude>
+    <ClInclude Include="FPSCamera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -127,6 +130,9 @@
     </ClCompile>
     <ClCompile Include="I420FrameCamera.cpp">
       <Filter>I420</Filter>
+    </ClCompile>
+    <ClCompile Include="FPSCamera.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

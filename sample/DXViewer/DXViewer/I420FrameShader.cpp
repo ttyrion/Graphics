@@ -14,7 +14,7 @@ I420FrameShader::~I420FrameShader() {
 }
 
 bool I420FrameShader::Init() {
-    return CreateShaderAndInputLayout();
+    return CreateShaderAndInputLayout() && CreateMatrixBuffer() && CreateSamplerState();
 }
 
 void I420FrameShader::Release() {
@@ -136,7 +136,7 @@ bool I420FrameShader::CreateMatrixBuffer() {
     D3D11_BUFFER_DESC matrix_buffer_desc;
     // Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
     matrix_buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-    matrix_buffer_desc.ByteWidth = sizeof(MATRIX_BUFFER);           //size
+    matrix_buffer_desc.ByteWidth = sizeof(XMMATRIX);           //size
     matrix_buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;      //type
     matrix_buffer_desc.CPUAccessFlags = 0;
     matrix_buffer_desc.MiscFlags = 0;
@@ -174,14 +174,20 @@ bool I420FrameShader::SetShaderParameters(const XMMATRIX& w, const XMMATRIX &v, 
     XMMATRIX world = w;
     XMMATRIX view = v;
     XMMATRIX projection = p;
-    world = XMMatrixTranspose(world);
-    view = XMMatrixTranspose(view);
-    projection = XMMatrixTranspose(projection);
+    //On the CPU, 2D arrays are generally stored in row-major ordering, 
+    //But in HLSL, matrix declarations default to column-major ordering
+    //world = XMMatrixTranspose(world);
+    //view = XMMatrixTranspose(view);
+    //projection = XMMatrixTranspose(projection);
 
-    MATRIX_BUFFER matrix;
-    matrix.world = world;
-    matrix.view = view;
-    matrix.projection = projection;
+    XMMATRIX matrix;
+    //matrix.world = world;
+    //matrix.view = view;
+    //matrix.projection = projection;
+
+    XMMATRIX mvp = w*v*p;
+    matrix = XMMatrixTranspose(mvp);
+
     engine_->GetDeviceContext()->UpdateSubresource(matrix_buffer_, 0, NULL, &matrix, 0, 0);
     engine_->GetDeviceContext()->VSSetConstantBuffers(0, 1, &matrix_buffer_);
 
@@ -196,4 +202,6 @@ void I420FrameShader::Render(const UINT index_count) {
 
     engine_->GetDeviceContext()->PSSetSamplers(0, 1, &sampler_state_);
     engine_->GetDeviceContext()->DrawIndexed(index_count,0,0);
+
+    //engine_->GetDeviceContext()->Draw(8, 0);
 }

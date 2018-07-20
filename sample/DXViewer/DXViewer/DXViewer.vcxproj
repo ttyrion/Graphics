@@ -158,6 +158,7 @@
     <ClInclude Include="CubeShader.h" />
     <ClInclude Include="DXViewer.h" />
     <ClInclude Include="DXViewerApp.h" />
+    <ClInclude Include="FPSCamera.h" />
     <ClInclude Include="Graphic.h" />
     <ClInclude Include="GraphicEngine.h" />
     <ClInclude Include="I420Frame.h" />
@@ -177,6 +178,7 @@
     <ClCompile Include="CubeShader.cpp" />
     <ClCompile Include="DXViewer.cpp" />
     <ClCompile Include="DXViewerApp.cpp" />
+    <ClCompile Include="FPSCamera.cpp" />
     <ClCompile Include="Graphic.cpp" />
     <ClCompile Include="GraphicEngine.cpp" />
     <ClCompile Include="I420Frame.cpp" />
