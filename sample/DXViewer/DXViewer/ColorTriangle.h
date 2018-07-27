@@ -10,7 +10,7 @@ public:
     ~ColorTriangle();
     void Release() override;
     bool SetInputLayout() override;
-    void CreateInputBuffer() override;
+    bool CreateInputBuffer() override;
     void SetInputAssembler() override;
     bool SetShaderParameters(const DirectX::XMMATRIX& world, const DirectX::XMMATRIX& view, const DirectX::XMMATRIX& projection) override;
     void Render() override;

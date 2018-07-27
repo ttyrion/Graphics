@@ -202,6 +202,5 @@ void I420FrameShader::Render(const UINT index_count) {
 
     engine_->GetDeviceContext()->PSSetSamplers(0, 1, &sampler_state_);
     engine_->GetDeviceContext()->DrawIndexed(index_count,0,0);
-
     //engine_->GetDeviceContext()->Draw(8, 0);
 }

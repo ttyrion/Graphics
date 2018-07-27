@@ -24,9 +24,9 @@ bool ColorTriangle::SetInputLayout() {
     return shader_.Init();
 }
 
-void ColorTriangle::CreateInputBuffer() {
+bool ColorTriangle::CreateInputBuffer() {
     if (!engine_) {
-        return;
+        return false;
     }
 
     ColorVertex vertices[vertex_count] = {
@@ -51,7 +51,7 @@ void ColorTriangle::CreateInputBuffer() {
     vertex_data.SysMemPitch = 0;
     vertex_data.SysMemSlicePitch = 0;
     HRESULT hr = engine_->GetDevice()->CreateBuffer(&vertex_buffer_desc, &vertex_data, &vertex_buffer_);
-    FailedDirect3DDebugString(hr, , L"create vertex buffer in color triangle failed.";);
+    FailedDirect3DDebugString(hr, false, L"create vertex buffer in color triangle failed.";);
 
     //description of the static index buffer.
     D3D11_BUFFER_DESC index_buffer_desc;
@@ -67,7 +67,9 @@ void ColorTriangle::CreateInputBuffer() {
     index_data.SysMemPitch = 0;
     index_data.SysMemSlicePitch = 0;
     hr = engine_->GetDevice()->CreateBuffer(&index_buffer_desc, &index_data, &index_buffer_);
-    FailedDirect3DDebugString(hr, , L"create index buffer in color triangle failed.";);
+    FailedDirect3DDebugString(hr, false, L"create index buffer in color triangle failed.";);
+
+    return true;
 }
 
 void ColorTriangle::SetInputAssembler() {

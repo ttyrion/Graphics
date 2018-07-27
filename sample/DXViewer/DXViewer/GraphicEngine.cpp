@@ -175,13 +175,18 @@ bool GraphicEngine::InitDirect3D(HWND render_window, const unsigned int width, c
     //camera_.GetPosition() = XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f);
 
     //graphic_ = new ColorTriangle(this);
-    //graphic_ = new Cube(this);
-    graphic_ = new I420Frame(this);
+    graphic_ = new Cube(this);
+    //graphic_ = new I420Frame(this);
     bool succeed = graphic_->SetInputLayout(); 
     if (!succeed) {
         FailedDirect3DDebugString(E_FAIL, false, L"set input layout failed.");
     }
-    graphic_->CreateInputBuffer();
+    
+    succeed = graphic_->CreateInputBuffer();
+    if (!succeed) {
+        FailedDirect3DDebugString(E_FAIL, false, L"create input buffer failed.");
+    }
+
     graphic_->SetInputAssembler();
 
     return true;
@@ -266,27 +271,41 @@ void GraphicEngine::UpdateScene() {
     d3d_immediate_context_->ClearRenderTargetView(d3d_render_target_view_, reinterpret_cast<const float*>(&blue));
     d3d_immediate_context_->ClearDepthStencilView(d3d_depth_stencil_view_, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-    XMMATRIX world_matrix = XMMatrixScaling(0.5f, 0.5f, 1.0f);
-    //XMMATRIX translation = XMMatrixTranslation(-0.5f, -0.5f, -0.5f);
-    //world_matrix *= translation;
-
+    //XMMATRIX world_matrix = XMMatrixScaling(0.5f, 0.5f, 1.0f);
+    XMMATRIX world_matrix = XMMatrixIdentity();
+    
     static float angle = 0.0f;
     angle += 0.1f;
     if (angle >= XM_PI) {
         angle = 0.0f;
     }
 
-    camera_.SetPosition(4.0f, 0.0f, 0.0f);
+    XMMATRIX rotate_matrix = XMMatrixRotationY(angle);
+    world_matrix *= rotate_matrix;
+
+
+    static float pos = -10.0f;
+    static int direction = 1;
+    pos += 0.1f*direction;
+    if (pos >= 0.0f) {
+        direction = -1;
+    }
+    else if (pos <= -10.0f) {
+        direction = 1;
+    }
+
+    camera_.SetPosition(0.0f, 0.0f, pos);
     camera_.SetLook(XMFLOAT3(0.0f, 0.0f, 1.0f));
     camera_.SetRight(XMFLOAT3(1.0f, 0.0f, 0.0f));
     camera_.SetUp(XMFLOAT3(0.0f, 1.0f, 0.0f));
-    camera_.Yaw(angle);
+    //camera_.Yaw(angle);
+    
     camera_.UpdateView();
     XMMATRIX view_matrix = camera_.GetViewMatrix();
     //XMMATRIX projection_matrix = XMMatrixPerspectiveFovLH(XM_PIDIV2, width_ / (float)height_, 0.1f, 3.5f);
 
     static float d = 0.1f;
-    float ar = width_ / height_;
+    float ar = (float)width_ / height_;
 
     XMMATRIX projection = {
         { d,0,0,0},

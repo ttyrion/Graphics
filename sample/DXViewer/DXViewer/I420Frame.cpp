@@ -26,9 +26,9 @@ bool I420Frame::SetInputLayout() {
     return shader_.Init();
 }
 
-void I420Frame::CreateInputBuffer() {
+bool I420Frame::CreateInputBuffer() {
     if (!engine_) {
-        return;
+        return false;
     }
 
     //VIDEO_VERTEX vertices[] = {
@@ -110,21 +110,21 @@ void I420Frame::CreateInputBuffer() {
     vertex_data.SysMemPitch = 0;
     vertex_data.SysMemSlicePitch = 0;
     HRESULT hr = engine_->GetDevice()->CreateBuffer(&vertex_buffer_desc, &vertex_data, &vbuffer_[0]);
-    FailedDirect3DDebugString(hr, , L"create vertex buffer in frame failed.";);
+    FailedDirect3DDebugString(hr, false, L"create vertex buffer in frame failed.";);
 
     vertex_buffer_desc.ByteWidth = sizeof(XMFLOAT4) * vertex_count;  //size of the buffer
     vertex_data.pSysMem = vertex_color;
     vertex_data.SysMemPitch = 0;
     vertex_data.SysMemSlicePitch = 0;
     hr = engine_->GetDevice()->CreateBuffer(&vertex_buffer_desc, &vertex_data, &vbuffer_[1]);
-    FailedDirect3DDebugString(hr, , L"create vertex buffer in frame failed.";);
+    FailedDirect3DDebugString(hr, false, L"create vertex buffer in frame failed.";);
 
     vertex_buffer_desc.ByteWidth = sizeof(XMFLOAT2) * vertex_count;  //size of the buffer
     vertex_data.pSysMem = texture;
     vertex_data.SysMemPitch = 0;
     vertex_data.SysMemSlicePitch = 0;
     hr = engine_->GetDevice()->CreateBuffer(&vertex_buffer_desc, &vertex_data, &vbuffer_[2]);
-    FailedDirect3DDebugString(hr, , L"create vertex buffer in frame failed.";);
+    FailedDirect3DDebugString(hr, false, L"create vertex buffer in frame failed.";);
 
     //description of the static index buffer.
     D3D11_BUFFER_DESC index_buffer_desc;
@@ -140,7 +140,7 @@ void I420Frame::CreateInputBuffer() {
     index_data.SysMemPitch = 0;
     index_data.SysMemSlicePitch = 0;
     hr = engine_->GetDevice()->CreateBuffer(&index_buffer_desc, &index_data, &index_buffer_);
-    FailedDirect3DDebugString(hr, , L"create index buffer in frame failed.");
+    FailedDirect3DDebugString(hr, false, L"create index buffer in frame failed.");
 
     ID3DBlob* vertex_shader_blob = NULL;
     ID3DBlob* pixcel_shader_blob = NULL;
@@ -149,20 +149,20 @@ void I420Frame::CreateInputBuffer() {
     hr = D3DCompileFromFile(L"../DXViewer/I420Frame.hlsl", NULL, NULL, "I420FrameVertexShader", "vs_5_0", D3DCOMPILE_DEBUG, 0, &vertex_shader_blob, &err_blob);
     if (FAILED(hr)) {
         char* msg = err_blob == NULL ? NULL : (char*)err_blob->GetBufferPointer();
-        FailedDirect3DDebugString(hr, , L"compile vertex shader failed.");
+        FailedDirect3DDebugString(hr, false, L"compile vertex shader failed.");
     }
     hr = D3DCompileFromFile(L"../DXViewer/I420Frame.hlsl", NULL, NULL, "I420FramePixelShader", "ps_5_0", D3DCOMPILE_DEBUG, 0, &pixcel_shader_blob, &err_blob);
     if (FAILED(hr)) {
         char* msg = err_blob == NULL ? NULL : (char*)err_blob->GetBufferPointer();
-        FailedDirect3DDebugString(hr, , L"compile pixel shader failed.");
+        FailedDirect3DDebugString(hr, false, L"compile pixel shader failed.");
     }
 
     ID3D11VertexShader* vertex_shader;
     hr = engine_->GetDevice()->CreateVertexShader(vertex_shader_blob->GetBufferPointer(), vertex_shader_blob->GetBufferSize(), NULL, &vertex_shader);
-    FailedDirect3DDebugString(hr, , L"create vertex shader failed.");
+    FailedDirect3DDebugString(hr, false, L"create vertex shader failed.");
     ID3D11PixelShader* pixel_shader;
     hr = engine_->GetDevice()->CreatePixelShader(pixcel_shader_blob->GetBufferPointer(), pixcel_shader_blob->GetBufferSize(), NULL, &pixel_shader);
-    FailedDirect3DDebugString(hr, , L"create pixel shader failed.");
+    FailedDirect3DDebugString(hr, false, L"create pixel shader failed.");
     engine_->GetDeviceContext()->VSSetShader(vertex_shader, NULL, 0);
     engine_->GetDeviceContext()->PSSetShader(pixel_shader, NULL, 0);
 
@@ -183,7 +183,7 @@ void I420Frame::CreateInputBuffer() {
 
     int num = sizeof(vertex_desc) / sizeof(D3D11_INPUT_ELEMENT_DESC);
     hr = engine_->GetDevice()->CreateInputLayout(vertex_desc, num, vertex_shader_blob->GetBufferPointer(), vertex_shader_blob->GetBufferSize(), &input_layout);
-    FailedDirect3DDebugString(hr, , L"create input layout failed.");
+    FailedDirect3DDebugString(hr, false, L"create input layout failed.");
     engine_->GetDeviceContext()->IASetInputLayout(input_layout);
 
     ReleaseCOMInterface(input_layout);
@@ -192,6 +192,8 @@ void I420Frame::CreateInputBuffer() {
     ReleaseCOMInterface(vertex_shader_blob);
     ReleaseCOMInterface(pixcel_shader_blob);
     ReleaseCOMInterface(err_blob);
+
+    return true;
 }
 
 void I420Frame::SetInputAssembler() {

@@ -9,8 +9,8 @@ public:
     ~Graphic();
 
     virtual void Release();
-    virtual bool SetInputLayout() { return true; };
-    virtual void CreateInputBuffer() {};
+    virtual bool SetInputLayout() { return false; };
+    virtual bool CreateInputBuffer() { return false; };
     virtual void SetInputAssembler() {};
     virtual bool SetShaderParameters(const DirectX::XMMATRIX& world, const DirectX::XMMATRIX& view, const DirectX::XMMATRIX& projection) { return true; };
     virtual void Render() {};

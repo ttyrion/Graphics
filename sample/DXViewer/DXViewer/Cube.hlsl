@@ -11,7 +11,7 @@ cbuffer MatrixBuffer
 //self-def types :POSITION, COLOR, SV_POSITION are "semantics" conveying the use of the variable to the GPU
 struct VertexShader_INPUT
 {
-    float4 position : POSITION;
+    float3 position : POSITION;
     float4 color    : COLOR;
 };
 
@@ -21,11 +21,15 @@ struct PixelShader_INPUT //that is the output of the vertex shader
     float4 color    : COLOR;
 };
 
-PixelShader_INPUT CubeVertexShader(VertexShader_INPUT input)
+PixelShader_INPUT CubeVertexShader(VertexShader_INPUT input, uint id : SV_InstanceID)
 {
     PixelShader_INPUT output;
-    input.position.w = 1;  //Just to change the position vector to be 4 units, for proper matrix calculations.
-    output.position = mul(input.position, world);
+    output.position.x = input.position.x + id;
+    output.position.y = input.position.y;
+    output.position.z = input.position.z;
+    output.position.w = 1;  //Just to change the position vector to be 4 units, for proper matrix calculations.
+
+    output.position = mul(output.position, world);
     output.position = mul(output.position, view);
     output.position = mul(output.position, projection);
 
