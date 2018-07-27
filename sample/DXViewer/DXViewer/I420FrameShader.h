@@ -13,7 +13,7 @@ public:
     void Render(const UINT index_count);
 
 private:
-    bool CreateShaderAndInputLayout();
+    //bool CreateShaderAndInputLayout();
     bool CreateMatrixBuffer();
     bool CreateSamplerState();
     bool CreateShaderResource(const int frame_width, const int frame_height);

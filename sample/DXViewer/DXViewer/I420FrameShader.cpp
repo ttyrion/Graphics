@@ -14,7 +14,7 @@ I420FrameShader::~I420FrameShader() {
 }
 
 bool I420FrameShader::Init() {
-    return CreateShaderAndInputLayout() && CreateMatrixBuffer() && CreateSamplerState();
+    return CreateMatrixBuffer() && CreateSamplerState();
 }
 
 void I420FrameShader::Release() {
@@ -23,62 +23,62 @@ void I420FrameShader::Release() {
     ReleaseCOMInterface(sampler_state_);
 }
 
-bool I420FrameShader::CreateShaderAndInputLayout() {
-    if (!engine_) {
-        return false;
-    }
-    ID3DBlob* vertex_shader_blob = NULL;
-    ID3DBlob* pixcel_shader_blob = NULL;
-    ID3DBlob* err_blob = NULL;
-    HRESULT hr = D3DCompileFromFile(L"../DXViewer/I420Frame.hlsl", NULL, NULL, "I420FrameVertexShader", "vs_5_0", D3DCOMPILE_DEBUG, 0, &vertex_shader_blob, &err_blob);
-    if (FAILED(hr)) {
-        char* msg = err_blob == NULL ? NULL : (char*)err_blob->GetBufferPointer();
-        FailedDirect3DDebugString(hr, false, L"compile vertex shader failed.");
-    }
-    hr = D3DCompileFromFile(L"../DXViewer/I420Frame.hlsl", NULL, NULL, "I420FramePixelShader", "ps_5_0", D3DCOMPILE_DEBUG, 0, &pixcel_shader_blob, &err_blob);
-    if (FAILED(hr)) {
-        char* msg = err_blob == NULL ? NULL : (char*)err_blob->GetBufferPointer();
-        FailedDirect3DDebugString(hr, false, L"compile pixel shader failed.");
-    }
-
-    ID3D11VertexShader* vertex_shader;
-    hr = engine_->GetDevice()->CreateVertexShader(vertex_shader_blob->GetBufferPointer(), vertex_shader_blob->GetBufferSize(), NULL, &vertex_shader);
-    FailedDirect3DDebugString(hr, false, L"create vertex shader failed.");
-    ID3D11PixelShader* pixel_shader;
-    hr = engine_->GetDevice()->CreatePixelShader(pixcel_shader_blob->GetBufferPointer(), pixcel_shader_blob->GetBufferSize(), NULL, &pixel_shader);
-    FailedDirect3DDebugString(hr, false, L"create pixel shader failed.");
-    engine_->GetDeviceContext()->VSSetShader(vertex_shader, NULL, 0);
-    engine_->GetDeviceContext()->PSSetShader(pixel_shader, NULL, 0);
-
-    ID3D11InputLayout* input_layout = NULL;
-    //This struct describes a single vertex property.
-    /*
-    Semantic	Values
-    POSITION	float, float, float
-    POSITIONT	float, float, float
-    COLOR	    float, float, float, float
-    PSIZE	    float
-    */
-    D3D11_INPUT_ELEMENT_DESC vertex_desc[3] = {
-        { "POSITION",0, DXGI_FORMAT_R32G32B32_FLOAT ,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR",0, DXGI_FORMAT_R32G32B32A32_FLOAT ,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD",0, DXGI_FORMAT_R32G32_FLOAT ,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-    };
-
-    int num = sizeof(vertex_desc) / sizeof(D3D11_INPUT_ELEMENT_DESC);
-    hr = engine_->GetDevice()->CreateInputLayout(vertex_desc, num, vertex_shader_blob->GetBufferPointer(), vertex_shader_blob->GetBufferSize(), &input_layout);
-    FailedDirect3DDebugString(hr, false, L"create input layout failed.");
-    engine_->GetDeviceContext()->IASetInputLayout(input_layout);
-
-    ReleaseCOMInterface(input_layout);
-    ReleaseCOMInterface(vertex_shader);
-    ReleaseCOMInterface(pixel_shader);
-    ReleaseCOMInterface(vertex_shader_blob);
-    ReleaseCOMInterface(pixcel_shader_blob);
-    ReleaseCOMInterface(err_blob);
-
-    return true;
-}
+//bool I420FrameShader::CreateShaderAndInputLayout() {
+//    if (!engine_) {
+//        return false;
+//    }
+//    ID3DBlob* vertex_shader_blob = NULL;
+//    ID3DBlob* pixcel_shader_blob = NULL;
+//    ID3DBlob* err_blob = NULL;
+//    HRESULT hr = D3DCompileFromFile(L"../DXViewer/I420Frame.hlsl", NULL, NULL, "I420FrameVertexShader", "vs_5_0", D3DCOMPILE_DEBUG, 0, &vertex_shader_blob, &err_blob);
+//    if (FAILED(hr)) {
+//        char* msg = err_blob == NULL ? NULL : (char*)err_blob->GetBufferPointer();
+//        FailedDirect3DDebugString(hr, false, L"compile vertex shader failed.");
+//    }
+//    hr = D3DCompileFromFile(L"../DXViewer/I420Frame.hlsl", NULL, NULL, "I420FramePixelShader", "ps_5_0", D3DCOMPILE_DEBUG, 0, &pixcel_shader_blob, &err_blob);
+//    if (FAILED(hr)) {
+//        char* msg = err_blob == NULL ? NULL : (char*)err_blob->GetBufferPointer();
+//        FailedDirect3DDebugString(hr, false, L"compile pixel shader failed.");
+//    }
+//
+//    ID3D11VertexShader* vertex_shader;
+//    hr = engine_->GetDevice()->CreateVertexShader(vertex_shader_blob->GetBufferPointer(), vertex_shader_blob->GetBufferSize(), NULL, &vertex_shader);
+//    FailedDirect3DDebugString(hr, false, L"create vertex shader failed.");
+//    ID3D11PixelShader* pixel_shader;
+//    hr = engine_->GetDevice()->CreatePixelShader(pixcel_shader_blob->GetBufferPointer(), pixcel_shader_blob->GetBufferSize(), NULL, &pixel_shader);
+//    FailedDirect3DDebugString(hr, false, L"create pixel shader failed.");
+//    engine_->GetDeviceContext()->VSSetShader(vertex_shader, NULL, 0);
+//    engine_->GetDeviceContext()->PSSetShader(pixel_shader, NULL, 0);
+//
+//    ID3D11InputLayout* input_layout = NULL;
+//    //This struct describes a single vertex property.
+//    /*
+//    Semantic	Values
+//    POSITION	float, float, float
+//    POSITIONT	float, float, float
+//    COLOR	    float, float, float, float
+//    PSIZE	    float
+//    */
+//    D3D11_INPUT_ELEMENT_DESC vertex_desc[3] = {
+//        { "POSITIONDD",0, DXGI_FORMAT_R32G32B32_FLOAT ,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+//        { "COLOR",0, DXGI_FORMAT_R32G32B32A32_FLOAT ,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+//        { "TEXCOORD",0, DXGI_FORMAT_R32G32_FLOAT ,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+//    };
+//
+//    int num = sizeof(vertex_desc) / sizeof(D3D11_INPUT_ELEMENT_DESC);
+//    hr = engine_->GetDevice()->CreateInputLayout(vertex_desc, num, vertex_shader_blob->GetBufferPointer(), vertex_shader_blob->GetBufferSize(), &input_layout);
+//    FailedDirect3DDebugString(hr, false, L"create input layout failed.");
+//    engine_->GetDeviceContext()->IASetInputLayout(input_layout);
+//
+//    ReleaseCOMInterface(input_layout);
+//    ReleaseCOMInterface(vertex_shader);
+//    ReleaseCOMInterface(pixel_shader);
+//    ReleaseCOMInterface(vertex_shader_blob);
+//    ReleaseCOMInterface(pixcel_shader_blob);
+//    ReleaseCOMInterface(err_blob);
+//
+//    return true;
+//}
 
 bool I420FrameShader::CreateShaderResource(const int frame_width, const int frame_height) {
     //YUV三个分量 -> 三个纹理

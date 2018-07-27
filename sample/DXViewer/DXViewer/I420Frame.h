@@ -17,4 +17,5 @@ public:
 
 private:
     I420FrameShader shader_;
+    ID3D11Buffer* vbuffer_[3] = { NULL };
 };

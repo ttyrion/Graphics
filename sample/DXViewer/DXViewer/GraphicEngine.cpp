@@ -270,29 +270,30 @@ void GraphicEngine::UpdateScene() {
     //XMMATRIX translation = XMMatrixTranslation(-0.5f, -0.5f, -0.5f);
     //world_matrix *= translation;
 
-    camera_.SetPosition(0.0f, 0.0f, 1.0f);
+    static float angle = 0.0f;
+    angle += 0.1f;
+    if (angle >= XM_PI) {
+        angle = 0.0f;
+    }
+
+    camera_.SetPosition(4.0f, 0.0f, 0.0f);
     camera_.SetLook(XMFLOAT3(0.0f, 0.0f, 1.0f));
     camera_.SetRight(XMFLOAT3(1.0f, 0.0f, 0.0f));
     camera_.SetUp(XMFLOAT3(0.0f, 1.0f, 0.0f));
-    camera_.Yaw(XM_PIDIV2/4);
-    //camera_.Walk(direction::DOWN, 4.0f);
+    camera_.Yaw(angle);
     camera_.UpdateView();
     XMMATRIX view_matrix = camera_.GetViewMatrix();
-    XMMATRIX projection_matrix = XMMatrixPerspectiveFovLH(XM_PIDIV2, width_ / (float)height_, 0.1f, 100.0f);
+    //XMMATRIX projection_matrix = XMMatrixPerspectiveFovLH(XM_PIDIV2, width_ / (float)height_, 0.1f, 3.5f);
 
-    static float d = 5.0;
+    static float d = 0.1f;
+    float ar = width_ / height_;
 
     XMMATRIX projection = {
-        {1,0,0,0},
-        {0,1,0,0},
-        {0,0,1,1 / 1.0f},
+        { d,0,0,0},
+        {0,d*ar,0,0},
+        {0,0,1,1},
         { 0,0,0,0 }
     };
-
-    d -= 0.5;
-    if (d <= 0) {
-        d = 5;
-    }
 
     graphic_->SetShaderParameters(world_matrix, view_matrix, projection);
     graphic_->Render();
